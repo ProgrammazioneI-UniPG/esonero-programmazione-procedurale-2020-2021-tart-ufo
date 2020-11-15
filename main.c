@@ -3,10 +3,10 @@
 #include <time.h>
 #include <string.h>
 
+void xor_string(char dest[], char string[], char key[], size_t length);
 int read_choise(void);
 void read_userkey(char key[], size_t minlen);
 void keygen(char dest[], size_t lengtht);
-void xor_string(char dest[], char string[], char key[], size_t length);
 
 int main(int argc, char const *argv[]) {
   char plaintext[128];
@@ -28,19 +28,30 @@ int main(int argc, char const *argv[]) {
       break;
   }
 
-  // encrypt the message and print it
+  // encrypt the message and print it in HEX in order to avoid non-printable chars issues
   xor_string(ciphertext, plaintext, key, strlen(plaintext));
   printf("\n\nYour encrypted message (HEX)\n-> ");
   for (size_t i = 0; i < (strlen(plaintext) - 1); i++) {
     printf(" %x", ciphertext[i]);
   }
 
-  // decrypt the message and check if the operation was successfull
+  // decrypt the message and print it to confirm that the operation was successfull
   char original_message[128];
   xor_string(original_message, ciphertext, key, strlen(plaintext));
   printf("\n\nYour original message (retrieved by doing the inverse operation)\n-> %s", original_message);
 
   return 0;
+}
+
+/**
+* Execute the XOR operation between each char of string and key, and store the
+* result on dest
+*/
+void xor_string(char dest[], char string[], char key[], size_t length) {
+  for (size_t i = 0; i < length; i++) {
+     dest[i] = string[i] ^ key[i];
+  }
+  dest[length] = '\n';
 }
 
 /**
@@ -77,15 +88,4 @@ void keygen(char dest[], size_t length) {
     dest[i] = (rand() % 128); // the random value must be a valid ASCII char
     printf(" %x", dest[i]);
   }
-}
-
-/**
-* Execute the XOR operation between each char of string and key, and store the
-* result on dest
-*/
-void xor_string(char dest[], char string[], char key[], size_t length) {
-  for (size_t i = 0; i < length; i++) {
-     dest[i] = string[i] ^ key[i];
-  }
-  dest[length] = '\n';
 }
